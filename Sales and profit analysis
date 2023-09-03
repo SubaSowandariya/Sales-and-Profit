@@ -1,0 +1,44 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+import seaborn as sns
+df.head(10)
+df.info()
+df.sum()
+df['Sales'].sum()
+df['Profit'].sum()
+#sales vs profit
+sns.regplot(x='Sales', y='Profit', data=df, scatter_kws={"color":"blue"}, line_kws={"color":"black"})
+plt.rcParams['figure.figsize']=(15,6)
+correlation_matrix=df.corr(method='pearson')
+sns.heatmap(correlation_matrix,annot=True)
+plt.title('correlation matrix for numeric features')
+plt.xlabel('Sales')
+plt.ylabel('Profit')
+plt.show()
+df=df.drop(['Postal Code'], axis=1)
+sns.pairplot(df)
+#category wise sales and profit
+df.groupby('Category')['Profit','Sales'].agg(['sum']).plot.bar()
+plt.ylabel('PROFIT')
+plt.show()
+#divide the category into sub-category and analyze
+plt.figure(figsize=(14,10))
+statewise=df.groupby(['Sub-Category'])['Profit'].sum().nlargest(50)
+#customers region-wise
+plt.figure(figsize=(8,8))
+plt.title('Region')
+plt.pie(df['Region'].value_counts(),labels=df['Region'].value_counts().index,autopct='%1.1f%%')
+plt.show()
+df.groupby('Region').sum()['Sales']
+top_states_s=df.groupby("State").Sales.sum().nlargest(n=10)
+top_states_p=df.groupby("State").Profit.sum().nlargest(n=10)
+plt.style.use('seaborn')
+top_states_s.plot(kind='bar',figsize=(10,6),fontsize=14)
+top_states_p.plot(kind='bar',figsize=(10,6),fontsize=14,color='red')
+plt.xlabel('States')
+plt.ylabel('Total Sales')
+plt.title('Top 10 States Sales vs Profit',fontsize=20)
+plt.show()
+
+statewise.plot.barh()
